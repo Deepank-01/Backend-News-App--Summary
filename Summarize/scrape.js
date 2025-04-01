@@ -1,68 +1,45 @@
-// import puppeteer from "puppeteer";
-
-// export async function extractNewsText(url) {
-//     if (!url) {
-//       console.log("Please provide a valid URL.");
-//       return;  // This returns `undefined` if no URL is provided
-//     }
-  
-//     const browser = await puppeteer.launch({ headless: "new" });
-//     const page = await browser.newPage();
-  
-//     try {
-//       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-  
-//       const newsText = await page.evaluate(() => {
-//         let article = document.querySelector("article") || document.body;
-//         return article.innerText.trim();  // ✅ This value is returned to `newsText`
-//       });
-  
-//       return newsText;  // ✅ This returns the extracted text from the webpage
-//     } catch (error) {
-//       console.error("Error extracting news:", error);
-//       return null;  // ✅ Returns `null` if an error occurs
-//     } finally {
-//       await browser.close();
-//     }
-//   }
-  
-
 import puppeteer from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 
 export async function extractNewsText(url) {
   if (!url) {
-    console.log("Please provide a valid URL.");
-    return;
+    console.error("❌ Please provide a valid URL.");
+    return null;
   }
 
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: true }); // Use true for better performance
   const page = await browser.newPage();
 
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
-    // Get raw HTML of the page, but exclude stylesheets
+    // Ensure page has loaded content
+    await page.waitForSelector("body", { timeout: 10000 });
+
+    // Fetch HTML content
     const htmlContent = await page.evaluate(() => {
-      // Remove stylesheets and scripts before sending to JSDOM
       document.querySelectorAll("style, link[rel='stylesheet'], script").forEach(el => el.remove());
       return document.documentElement.outerHTML;
     });
 
-    // Use JSDOM without parsing CSS to prevent errors
-    const dom = new JSDOM(htmlContent, { resources: "usable", pretendToBeVisual: true });
+    // Parsing the page content using JSDOM and Readability
+    const dom = new JSDOM(htmlContent, { url });
     const reader = new Readability(dom.window.document);
     const article = reader.parse();
 
     if (!article) {
-      console.log("Failed to extract clean text.");
+      console.error("⚠️ Failed to extract content using Readability.");
       return null;
     }
 
     return article.textContent.trim();
   } catch (error) {
-    console.error("Error extracting news:", error);
+    if (error.message.includes("Navigation timeout")) {
+      console.error("⏳ Website took too long to load. Try increasing the timeout.");
+    } else {
+      console.error("❌ Error extracting news:", error);
+    }
     return null;
   } finally {
     await browser.close();

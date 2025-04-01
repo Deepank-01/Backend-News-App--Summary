@@ -6,6 +6,7 @@ import getNewsContent from "../Summarize/google.js"
 export const Summarize=async (req,res)=>{
 try{
  const {url}= req.body
+ console.log("THis is the url to summazie  ",url)
  const email=req.user.email;
  const user=await User.findOne({email});
  if(!user){
@@ -15,6 +16,7 @@ try{
     })
 }
  const sum_text=await getNewsContent(url);
+ console.log(sum_text)
  if(!sum_text){
     return res.status(500).json({
         message:"Error in the summization of the text",
@@ -22,7 +24,7 @@ try{
     })
  }
  return res.status(200).json({
-    message:sum_text,
+    summary:sum_text,
     success:true
  })
 }

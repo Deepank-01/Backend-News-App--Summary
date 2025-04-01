@@ -11,6 +11,7 @@ export const Singup =async(req,res)=>{
 //    google auth and sing up
 try{
     const {name,email,password}=req.body; 
+    console.log("Step 1")
     if(!name || ! email || ! password) {
        return  res.status(400).json({
             message:"Missing data",
@@ -54,6 +55,7 @@ try{
   return   res.status(200).json({
         message:" Add new user",
         token:token,
+        user:new_user,
         success:true
     })
     
@@ -111,6 +113,7 @@ export const Login=async(req,res)=>{
   return res.status(200).json({
         message:" Login Successful ",
         token:token,
+        user:user,
         success:true
     })
     }

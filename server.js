@@ -10,7 +10,13 @@ import dotenv from "dotenv"
 dotenv.config();
 const PORT=process.env.PORT || 3000
 
-
+// cores
+import cors  from 'cors';
+app.use(cors({
+    origin: "http://localhost:5174", // Frontend URL
+    credentials: true, // Allow cookies and credentials
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
+}));
 
 // db connection 
 import dbconnect from "./Connection/dbconnect.js"

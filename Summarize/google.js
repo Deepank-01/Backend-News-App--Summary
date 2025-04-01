@@ -46,7 +46,7 @@ const getNewsContent =async (text)=> {
     console.log("Summarization in progress...");
 
     const result = await model.generateContent(prompt);
-    console.log(result?.response?.text());
+    // console.log(result?.response?.text());
     return result?.response?.text();
 }
 
