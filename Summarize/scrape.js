@@ -11,6 +11,7 @@ export async function extractNewsText(url) {
   // Puppeteer configuration that works both locally and on Render
   const browser = await puppeteer.launch({
     headless: true, // New headless mode
+    ignoreDefaultArgs: ["--disable-extensions"],
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -23,10 +24,11 @@ export async function extractNewsText(url) {
       '--disable-dev-shm-usage',
       '--disable-web-security',
     ],
+    ignoreHTTPSErrors: true,
   });
 
   const page = await browser.newPage();
-
+  await page.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
   try {
     await page.goto(url, { 
       waitUntil: "domcontentloaded", 
