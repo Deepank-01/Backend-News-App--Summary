@@ -26,9 +26,11 @@ export async function extractNewsText(url) {
     ],
     ignoreHTTPSErrors: true,
   });
-
+  console.log("Above the putter")
   const page = await browser.newPage();
+  
   await page.setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
+  console.log("Below the putter")
   try {
     await page.goto(url, { 
       waitUntil: "domcontentloaded", 
@@ -37,13 +39,13 @@ export async function extractNewsText(url) {
 
     // Ensure page has loaded content
     await page.waitForSelector("body", { timeout: 10000 });
-
+     console.log("After the page loaded")
     // Fetch HTML content
     const htmlContent = await page.evaluate(() => {
       document.querySelectorAll("style, link[rel='stylesheet'], script").forEach(el => el.remove());
       return document.documentElement.outerHTML;
     });
-
+ console.log("After html contain loaded")
     // Parsing the page content using JSDOM and Readability
     const dom = new JSDOM(htmlContent, { url });
     const reader = new Readability(dom.window.document);
