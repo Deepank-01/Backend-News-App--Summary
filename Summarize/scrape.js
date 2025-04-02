@@ -10,7 +10,7 @@ export async function extractNewsText(url) {
 
   // Puppeteer configuration that works both locally and on Render
   const browser = await puppeteer.launch({
-    headless: "new", // New headless mode
+    headless: true, // New headless mode
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
