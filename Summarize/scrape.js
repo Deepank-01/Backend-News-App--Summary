@@ -5,14 +5,33 @@ import { JSDOM } from "jsdom";
 export async function extractNewsText(url) {
   if (!url) {
     console.error("❌ Please provide a valid URL.");
-    return null;
+    return null; 
   }
 
-  const browser = await puppeteer.launch({ headless: true }); // Use true for better performance
+  // Puppeteer configuration that works both locally and on Render
+  const browser = await puppeteer.launch({
+    headless: "new", // New headless mode
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process',
+      '--disable-accelerated-2d-canvas',
+      '--disable-dev-shm-usage',
+      '--disable-web-security',
+    ],
+  });
+
   const page = await browser.newPage();
 
   try {
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.goto(url, { 
+      waitUntil: "domcontentloaded", 
+      timeout: 30000 
+    });
 
     // Ensure page has loaded content
     await page.waitForSelector("body", { timeout: 10000 });

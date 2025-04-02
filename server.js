@@ -13,7 +13,7 @@ const PORT=process.env.PORT || 3000
 // cores
 import cors  from 'cors';
 app.use(cors({
-    origin: "http://localhost:5174", // Frontend URL
+    origin: "http://localhost:5173", // Frontend URL
     credentials: true, // Allow cookies and credentials
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
 }));
